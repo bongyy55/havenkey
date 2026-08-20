@@ -1,0 +1,17 @@
+# Environment variables (NEVER commit these - contains secrets)
+.env
+.env.local
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+.next/
+
+# OS files
+.DS_Store
+Thumbs.db
