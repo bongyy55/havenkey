@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AgentSignup() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function AgentSignup() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -63,11 +65,15 @@ export default function AgentSignup() {
   return (
     <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md bg-white rounded-sm p-8 border border-[#111111]/10">
-        <Link
-          href="/"
-          className="font-display text-2xl text-[#111111] tracking-wide block text-center mb-6"
-        >
-          B<span className="text-[#C9975C]">'</span>Narch
+        <Link href="/" className="flex justify-center mb-6">
+          <Image
+            src="/logo.jpeg"
+            alt="B'Narch"
+            width={160}
+            height={160}
+            className="h-14 w-auto object-contain"
+            priority
+          />
         </Link>
 
         <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
@@ -165,16 +171,25 @@ export default function AgentSignup() {
             <label className="block text-xs text-[#2B2B2B]/70 mb-1">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              required
-              minLength={6}
-              value={form.password}
-              onChange={handleChange}
-              className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
-              placeholder="At least 6 characters"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                required
+                minLength={6}
+                value={form.password}
+                onChange={handleChange}
+                className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 pr-10 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
+                placeholder="At least 6 characters"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2B2B2B]/50 hover:text-[#C9975C]"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
 
           {error && <p className="text-red-500 text-sm">{error}</p>}

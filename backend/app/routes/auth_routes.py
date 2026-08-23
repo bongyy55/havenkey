@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ... import models, schemas
+from .. import models, schemas
 from ..database import get_db
 from ..auth import hash_password, verify_password, create_access_token
 from ..email_utils import generate_otp, send_otp_email
