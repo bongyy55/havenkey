@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import secrets
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -6,7 +7,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
 from ..auth import hash_password, verify_password, create_access_token
-from ..email_utils import generate_otp, send_otp_email
+from ..email_utils import generate_otp, send_otp_email, send_password_reset_email
 
 router = APIRouter()
 
@@ -75,6 +76,45 @@ def verify_otp(payload: schemas.VerifyOtpRequest, db: Session = Depends(get_db))
 
     return {"message": "Account verified successfully"}
 
+@router.post("/forgot-password")
+def forgot_password(payload: schemas.ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == payload.email).first()
+
+    # Always return the same response whether or not the email exists,
+    # so we don't leak which emails are registered
+    if not user:
+        return {"message": "If that email exists, a reset link has been sent."}
+
+    reset_token = secrets.token_urlsafe(32)
+    user.otp_code = reset_token
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=10)
+    db.commit()
+
+    reset_link = f"http://localhost:3000/reset-password?email={payload.email}&token={reset_token}"
+    send_password_reset_email(user.email, user.name, reset_link)
+
+    return {"message": "If that email exists, a reset link has been sent."}
+
+
+@router.post("/reset-password")
+def reset_password(payload: schemas.ResetPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == payload.email).first()
+
+    if not user or not user.otp_code or not user.otp_expires_at:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset link")
+
+    if datetime.utcnow() > user.otp_expires_at:
+        raise HTTPException(status_code=400, detail="This reset link has expired")
+
+    if payload.token != user.otp_code:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset link")
+
+    user.password = hash_password(payload.new_password)
+    user.otp_code = None
+    user.otp_expires_at = None
+    db.commit()
+
+    return {"message": "Password reset successfully"}
 
 @router.post("/login", response_model=schemas.TokenResponse)
 def login_user(credentials: schemas.LoginRequest, db: Session = Depends(get_db)):

@@ -59,3 +59,27 @@ def send_otp_email(to_email: str, name: str, otp_code: str):
     </div>
     """
     send_email(to_email, subject, html_content)
+
+def send_password_reset_email(to_email: str, name: str, reset_link: str):
+    """Sends the B'Narch-branded password reset email"""
+    subject = "Reset your B'Narch password"
+    html_content = f"""
+    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; background-color: #ffffff;">
+        <h1 style="color: #111111; font-size: 22px; margin-bottom: 8px;">
+            B'<span style="color: #C9975C;">Narch</span>
+        </h1>
+        <p style="color: #333333; font-size: 15px;">Hi {name},</p>
+        <p style="color: #333333; font-size: 15px;">
+            We received a request to reset your password. Click the button below to choose a new one. This link expires in 10 minutes.
+        </p>
+        <div style="text-align: center; margin: 28px 0;">
+            <a href="{reset_link}" style="background-color: #111111; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 4px; font-size: 14px; font-weight: bold; display: inline-block;">
+                Reset Password
+            </a>
+        </div>
+        <p style="color: #888888; font-size: 13px;">
+            If you didn't request this, you can safely ignore this email — your password will remain unchanged.
+        </p>
+    </div>
+    """
+    send_email(to_email, subject, html_content)

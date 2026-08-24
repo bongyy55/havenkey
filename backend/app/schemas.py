@@ -34,3 +34,11 @@ class TokenResponse(BaseModel):
 class VerifyOtpRequest(BaseModel):
     email: EmailStr
     otp_code: str
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    token: str
+    new_password: str
