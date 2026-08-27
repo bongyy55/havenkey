@@ -1,16 +1,17 @@
-import { Fraunces, Manrope } from "next/font/google";
+import { Playfair_Display, Comic_Neue } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
-const fraunces = Fraunces({
+const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const manrope = Manrope({
+const comicNeue = Comic_Neue({
   subsets: ["latin"],
   variable: "--font-body",
-  weight: ["400", "500", "600", "700"],
+  weight: ["300", "400", "700"],
 });
 
 export const metadata = {
@@ -22,8 +23,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${fraunces.variable} ${manrope.variable} antialiased`}>
-        {children}
+      <body className={`${playfair.variable} ${comicNeue.variable} antialiased`}>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
