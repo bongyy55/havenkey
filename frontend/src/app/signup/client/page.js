@@ -1,8 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ClientSignup() {
   const router = useRouter();
@@ -58,12 +59,28 @@ export default function ClientSignup() {
   return (
     <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md bg-white rounded-sm p-8 border border-[#111111]/10">
-        <Link
-          href="/"
-          className="font-display text-2xl text-[#111111] tracking-wide block text-center mb-6"
-        >
-          B<span className="text-[#C9975C]">'</span>Narch
+        <Link href="/" className="flex justify-center mb-6">
+          <Image
+            src="/logo.jpeg"
+            alt="B'Narch"
+            width={160}
+            height={160}
+            className="h-20 w-auto object-contain"
+            priority
+          />
         </Link>
+
+        <div className="inline-flex w-full bg-[#F5F1E8] border border-[#111111]/10 rounded-sm p-1 mb-6">
+          <span className="flex-1 py-2 text-sm font-medium rounded-sm text-center bg-white text-[#111111] shadow-sm">
+            Client
+          </span>
+          <Link
+            href="/signup/agent"
+            className="flex-1 py-2 text-sm font-medium rounded-sm text-center text-[#2B2B2B]/60 hover:text-[#111111] transition"
+          >
+            Agent
+          </Link>
+        </div>
 
         <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
           Create your account

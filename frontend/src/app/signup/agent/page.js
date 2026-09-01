@@ -76,6 +76,18 @@ export default function AgentSignup() {
           />
         </Link>
 
+        <div className="inline-flex w-full bg-[#F5F1E8] border border-[#111111]/10 rounded-sm p-1 mb-6">
+          <Link
+            href="/signup/client"
+            className="flex-1 py-2 text-sm font-medium rounded-sm text-center text-[#2B2B2B]/60 hover:text-[#111111] transition"
+          >
+            Client
+          </Link>
+          <span className="flex-1 py-2 text-sm font-medium rounded-sm text-center bg-white text-[#111111] shadow-sm">
+            Agent
+          </span>
+        </div>
+
         <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
           Become an Agent
         </h1>

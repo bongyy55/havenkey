@@ -70,6 +70,18 @@ export default function ClientSignup() {
           />
         </Link>
 
+        <div className="inline-flex w-full bg-[#F5F1E8] border border-[#111111]/10 rounded-sm p-1 mb-6">
+          <span className="flex-1 py-2 text-sm font-medium rounded-sm text-center bg-white text-[#111111] shadow-sm">
+            Client
+          </span>
+          <Link
+            href="/signup/agent"
+            className="flex-1 py-2 text-sm font-medium rounded-sm text-center text-[#2B2B2B]/60 hover:text-[#111111] transition"
+          >
+            Agent
+          </Link>
+        </div>
+
         <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
           Create your account
         </h1>

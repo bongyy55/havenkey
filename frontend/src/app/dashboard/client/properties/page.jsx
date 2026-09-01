@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   Search,
@@ -23,6 +24,8 @@ import {
 } from "lucide-react";
 import Sidebar from "@/components/shared/Sidebar/Sidebar";
 import Navbar from "@/components/shared/Navbar/Navbar";
+
+// Place this file at: src/components/client/PropertiesPage.jsx
 
 const allProperties = [
   { id: 1, tag: "For Rent", price: "₦2,800,000", period: "/ year", title: "2 Bedroom Flat", location: "Yaba, Lagos", beds: 2, baths: 2, sqm: 24, type: "Apartment", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=600&q=80" },
@@ -47,10 +50,40 @@ const filterFields = [
 ];
 
 export default function PropertiesPage() {
+  const router = useRouter();
+
+  const [user, setUser] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("All");
   const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("Newest First");
+
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    const storedUser = localStorage.getItem("user");
+
+    if (!token || !storedUser) {
+      router.push("/login");
+      return;
+    }
+
+    try {
+      setUser(JSON.parse(storedUser));
+    } catch {
+      localStorage.removeItem("user");
+      router.push("/login");
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("user");
+    router.push("/login");
+  };
+
+  if (!user) {
+    return <div className="min-h-screen bg-[#F5F1E8]" />;
+  }
 
   const tabs = ["All", "For Rent", "For Sale"];
 
@@ -62,11 +95,16 @@ export default function PropertiesPage() {
   return (
     <div className="h-screen bg-[#F5F1E8] flex overflow-hidden">
       <div className="h-screen overflow-y-auto flex-shrink-0">
-        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} />
       </div>
 
       <div className="flex-1 min-w-0 h-screen overflow-y-auto">
-        <Navbar notificationCount={6} onMenuClick={() => setSidebarOpen(true)} />
+        <Navbar
+          user={user}
+          notificationCount={6}
+          onMenuClick={() => setSidebarOpen(true)}
+          onLogout={handleLogout}
+        />
 
         <main className="px-6 py-8 max-w-7xl mx-auto">
           <div className="mb-6">

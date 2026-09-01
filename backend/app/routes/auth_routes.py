@@ -4,11 +4,11 @@ import secrets
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from .. import models, schemas
+from ..models import user as models
+from ..schemas import user as schemas
+from ..services.auth import hash_password, verify_password, create_access_token
+from ..services.email_utils import generate_otp, send_otp_email, send_password_reset_email
 from ..database import get_db
-from ..auth import hash_password, verify_password, create_access_token
-from ..email_utils import generate_otp, send_otp_email, send_password_reset_email
-
 router = APIRouter()
 
 OTP_EXPIRY_MINUTES = 10

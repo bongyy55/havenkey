@@ -1,31 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+function ResetPasswordForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") || "";
+  const token = searchParams.get("token") || "";
+
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const missingLink = !email || !token;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
 
+    if (newPassword !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+
     try {
-      await fetch("http://127.0.0.1:8000/forgot-password", {
+      const res = await fetch("http://127.0.0.1:8000/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          token,
+          new_password: newPassword,
+        }),
       });
 
-      setSubmitted(true);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.detail || "Could not reset password. Please try again.");
+        setLoading(false);
+        return;
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/login");
+      }, 2000);
     } catch (err) {
       setError("Could not connect to the server. Please try again.");
-    } finally {
       setLoading(false);
     }
   };
@@ -44,28 +80,86 @@ export default function ForgotPasswordPage() {
           />
         </Link>
 
-        {!submitted ? (
+        {missingLink ? (
+          <div className="text-center">
+            <h1 className="font-display text-2xl text-[#111111] mb-2">
+              Invalid or expired link
+            </h1>
+            <p className="text-sm text-[#2B2B2B]/70 mb-6">
+              This password reset link is missing information. Please request a new one.
+            </p>
+            <Link
+              href="/forgot-password"
+              className="text-sm text-[#C9975C] font-medium hover:underline"
+            >
+              Request a new reset link
+            </Link>
+          </div>
+        ) : success ? (
+          <div className="text-center">
+            <h1 className="font-display text-2xl text-[#111111] mb-2">
+              Password reset successfully
+            </h1>
+            <p className="text-sm text-[#2B2B2B]/70">
+              Redirecting you to log in...
+            </p>
+          </div>
+        ) : (
           <>
             <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
-              Reset your password
+              Set a new password
             </h1>
             <p className="text-sm text-[#2B2B2B]/70 text-center mb-8">
-              Enter your email address and we'll send you a link to reset it.
+              Choose a new password for {email}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-xs text-[#2B2B2B]/70 mb-1">
-                  Email address
+                  New password
                 </label>
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
-                  placeholder="you@example.com"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 pr-10 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
+                    placeholder="At least 6 characters"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2B2B2B]/50 hover:text-[#C9975C]"
+                  >
+                    {showNewPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs text-[#2B2B2B]/70 mb-1">
+                  Confirm new password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    minLength={6}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 pr-10 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
+                    placeholder="Re-enter new password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2B2B2B]/50 hover:text-[#C9975C]"
+                  >
+                    {showConfirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}
@@ -75,22 +169,10 @@ export default function ForgotPasswordPage() {
                 disabled={loading}
                 className="w-full bg-[#111111] text-white font-medium py-3 rounded-sm hover:bg-[#C9975C] transition disabled:opacity-50"
               >
-                {loading ? "Sending..." : "Send reset link"}
+                {loading ? "Resetting..." : "Reset password"}
               </button>
             </form>
           </>
-        ) : (
-          <div className="text-center">
-            <div className="mx-auto mb-6 w-14 h-14 rounded-full bg-[#F5F1E8] flex items-center justify-center">
-              <span className="text-2xl">✉️</span>
-            </div>
-            <h1 className="font-display text-2xl text-[#111111] mb-2">
-              Check your inbox
-            </h1>
-            <p className="text-sm text-[#2B2B2B]/70">
-              If that email exists, you'll receive a reset link shortly.
-            </p>
-          </div>
         )}
 
         <p className="text-center text-sm text-[#2B2B2B]/70 mt-6">
@@ -101,5 +183,13 @@ export default function ForgotPasswordPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#F5F1E8]" />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
