@@ -1,6 +1,4 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+import requests
 import os
 from dotenv import load_dotenv
 
@@ -8,10 +6,7 @@ load_dotenv()
 
 import random
 
-SMTP_SERVER = os.getenv("BREVO_SMTP_SERVER")
-SMTP_PORT = int(os.getenv("BREVO_SMTP_PORT"))
-SMTP_LOGIN = os.getenv("BREVO_SMTP_LOGIN")
-SMTP_KEY = os.getenv("BREVO_SMTP_KEY")
+BREVO_API_KEY = os.getenv("BREVO_SMTP_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_NAME = os.getenv("SENDER_NAME")
 
@@ -22,18 +17,22 @@ def generate_otp() -> str:
 
 
 def send_email(to_email: str, subject: str, html_content: str):
-    """Sends an HTML email using Brevo's SMTP relay"""
-    msg = MIMEMultipart("alternative")
-    msg["Subject"] = subject
-    msg["From"] = f"{SENDER_NAME} <{SENDER_EMAIL}>"
-    msg["To"] = to_email
-
-    msg.attach(MIMEText(html_content, "html"))
-
-    with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
-        server.starttls()
-        server.login(SMTP_LOGIN, SMTP_KEY)
-        server.sendmail(SENDER_EMAIL, to_email, msg.as_string())
+    """Sends an HTML email using Brevo's HTTP API (not SMTP — Render blocks SMTP ports)"""
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": BREVO_API_KEY,
+        "content-type": "application/json"
+    }
+    payload = {
+        "sender": {"name": SENDER_NAME, "email": SENDER_EMAIL},
+        "to": [{"email": to_email}],
+        "subject": subject,
+        "htmlContent": html_content
+    }
+    response = requests.post(url, json=payload, headers=headers)
+    if response.status_code >= 400:
+        raise Exception(f"Brevo API error: {response.status_code} {response.text}")
 
 
 def send_otp_email(to_email: str, name: str, otp_code: str):
