@@ -6,9 +6,9 @@
   --font-display: "Playfair Display", serif;
   --font-body: "DM Sans", sans-serif;
   --color-bg-primary: #ffffff;
-  --color-bg-secondary: #F5F1E8;
+  --color-bg-secondary: #f5f1e8;
   --color-text-primary: #111111;
-  --color-text-secondary: #2B2B2B;
+  --color-text-secondary: #2b2b2b;
   --color-border: rgba(17, 17, 17, 0.1);
 }
 
@@ -28,4 +28,14 @@ body {
 
 .font-display {
   font-family: var(--font-display);
+}
+
+@keyframes toast-progress {
+  from {
+    transform: scaleX(1);
+  }
+
+  to {
+    transform: scaleX(0);
+  }
 }

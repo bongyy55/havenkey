@@ -1,6 +1,7 @@
 import { Playfair_Display, Comic_Neue } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { ToastProvider } from "@/components/shared/Toast/ToastProvider";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -23,9 +24,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${comicNeue.variable} antialiased`}>
+      <body
+        className={`${playfair.variable} ${comicNeue.variable} antialiased`}
+      >
         <ThemeProvider>
-          {children}
+          <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
       </body>
     </html>

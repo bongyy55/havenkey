@@ -6,8 +6,9 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { User, Mail, Lock, ChevronDown, ArrowRight } from "lucide-react";
+import { User, Mail, Lock, ChevronDown, ArrowRight, Loader2 } from "lucide-react";
 import AuthImage from "@/components/images/AuthImage.jpeg";
+import { useToast } from "@/components/shared/Toast/ToastProvider";
 
 const countryCodes = [
   { code: "+234", country: "Nigeria", iso: "ng" },
@@ -20,6 +21,7 @@ const countryCodes = [
 
 export default function ClientSignup() {
   const router = useRouter();
+  const { showToast } = useToast();
 
   const [form, setForm] = useState({
     name: "",
@@ -28,7 +30,6 @@ export default function ClientSignup() {
     password: "",
   });
   const [selectedCountry, setSelectedCountry] = useState(countryCodes[0]);
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -58,7 +59,6 @@ export default function ClientSignup() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
   };
 
   const goToAgent = (e) => {
@@ -71,7 +71,6 @@ export default function ClientSignup() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const fullPhoneNumber = `${selectedCountry.code}${form.phone}`;
@@ -90,14 +89,21 @@ export default function ClientSignup() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.detail || "Something went wrong. Please try again.");
+        showToast(
+          data.detail || "Something went wrong. Please try again.",
+          "error",
+        );
         setLoading(false);
         return;
       }
 
+      showToast(
+        "Account created successfully. Check your email to verify your account.",
+        "success",
+      );
       router.push(`/verify-email?email=${encodeURIComponent(form.email)}`);
     } catch (err) {
-      setError("Could not connect to the server. Please try again.");
+      showToast("Could not connect to the server. Please try again.", "error");
       setLoading(false);
     }
   };
@@ -180,6 +186,7 @@ export default function ClientSignup() {
                       type="text"
                       name="name"
                       required
+                      disabled={loading}
                       value={form.name}
                       onChange={handleChange}
                       className={inputClass}
@@ -200,6 +207,7 @@ export default function ClientSignup() {
                       type="email"
                       name="email"
                       required
+                      disabled={loading}
                       value={form.email}
                       onChange={handleChange}
                       className={inputClass}
@@ -276,6 +284,7 @@ export default function ClientSignup() {
                     type="tel"
                     name="phone"
                     required
+                    disabled={loading}
                     value={form.phone}
                     onChange={handleChange}
                     className="w-full px-3 py-2.5 text-sm text-[#111111] outline-none bg-transparent"
@@ -297,6 +306,7 @@ export default function ClientSignup() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     required
+                    disabled={loading}
                     minLength={6}
                     value={form.password}
                     onChange={handleChange}
@@ -326,25 +336,17 @@ export default function ClientSignup() {
                 </div>
               </div>
 
-              {/* Error Message Box */}
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-xs bg-red-50 p-2.5 rounded-xl border border-red-100"
-                >
-                  {error}
-                </motion.p>
-              )}
-
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#C9975C] text-white font-medium py-3 rounded-xl hover:bg-[#111111] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                className="w-full bg-[#C9975C] text-white font-medium py-3 rounded-lg hover:bg-[#111111] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
-                  <span>Creating account...</span>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Creating account...</span>
+                  </>
                 ) : (
                   <>
                     <span>Create Account</span>

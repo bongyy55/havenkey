@@ -1,39 +1,46 @@
 "use client";
 
 import { API_URL } from "@/lib/api";
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import AuthImage from "@/components/images/AuthImage.jpeg";
+import { useToast } from "@/components/shared/Toast/ToastProvider";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const justVerified = searchParams.get("verified") === "true";
+  const { showToast } = useToast();
 
   const [role, setRole] = useState("client");
   const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    if (justVerified) {
+      showToast(
+        "Your account has been verified. You can now log in.",
+        "success",
+      );
+    }
+  }, [justVerified, showToast]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
   };
 
   const handleRoleSwitch = (newRole) => {
     setRole(newRole);
-    setError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
 
     try {
       const res = await fetch(`${API_URL}/login`, {
@@ -48,16 +55,17 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.detail || "Invalid email or password");
+        showToast(data.detail || "Invalid email or password", "error");
         setLoading(false);
         return;
       }
 
       if (data.user.role !== role) {
-        setError(
+        showToast(
           `This account is registered as a${
             data.user.role === "agent" ? "n" : ""
           } ${data.user.role}. Please switch to the ${data.user.role} tab above.`,
+          "error",
         );
         setLoading(false);
         return;
@@ -65,6 +73,7 @@ function LoginForm() {
 
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      showToast("Welcome back. Login successful.", "success");
 
       if (data.user.role === "agent" && data.user.status === "pending") {
         router.push("/agent-pending");
@@ -76,7 +85,7 @@ function LoginForm() {
         router.push("/dashboard/client");
       }
     } catch (err) {
-      setError("Could not connect to the server. Please try again.");
+      showToast("Could not connect to the server. Please try again.", "error");
       setLoading(false);
     }
   };
@@ -159,19 +168,6 @@ function LoginForm() {
               </p>
             </div>
 
-            {/* Verified Banner */}
-            {justVerified && (
-              <motion.div
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-[#F5F1E8] border border-[#C9975C]/30 rounded-xl px-4 py-3 mb-4"
-              >
-                <p className="text-xs text-[#2B2B2B]/80">
-                  Your account has been verified. You can now log in.
-                </p>
-              </motion.div>
-            )}
-
             {/* Main Form */}
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="group">
@@ -186,6 +182,7 @@ function LoginForm() {
                     type="email"
                     name="email"
                     required
+                    disabled={loading}
                     value={form.email}
                     onChange={handleChange}
                     className={inputClass}
@@ -214,6 +211,7 @@ function LoginForm() {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     required
+                    disabled={loading}
                     value={form.password}
                     onChange={handleChange}
                     className={`${inputClass} pr-12`}
@@ -239,25 +237,17 @@ function LoginForm() {
                 </div>
               </div>
 
-              {/* Error Message Box */}
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0, y: -4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-500 text-xs bg-red-50 p-2.5 rounded-xl border border-red-100"
-                >
-                  {error}
-                </motion.p>
-              )}
-
               {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#C9975C] text-white font-medium py-3 rounded-xl hover:bg-[#111111] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                className="w-full bg-[#C9975C] text-white font-medium py-3 rounded-lg hover:bg-[#111111] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
               >
                 {loading ? (
-                  <span>Logging in...</span>
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Logging in...</span>
+                  </>
                 ) : (
                   <>
                     <span>Log in</span>
