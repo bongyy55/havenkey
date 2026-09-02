@@ -85,13 +85,13 @@ export default function ClientDashboard() {
   };
 
   if (!user) {
-    return <div className="min-h-screen bg-[#F5F1E8]" />;
+    return <div className="min-h-screen bg-[#F5F1E8] dark:bg-[#0f0f0f]" />;
   }
 
   const firstName = user.name?.split(" ")[0] || "there";
 
   return (
-    <div className="h-screen bg-[#F5F1E8] flex overflow-hidden">
+    <div className="h-screen bg-[#F5F1E8] dark:bg-[#0f0f0f] flex overflow-hidden">
       <div className="h-screen overflow-y-auto flex-shrink-0">
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} onLogout={handleLogout} />
       </div>
@@ -106,8 +106,8 @@ export default function ClientDashboard() {
 
         <main className="px-6 py-8 max-w-7xl mx-auto">
           <div className="mb-8">
-            <h1 className="font-display text-2xl text-[#111111]">Good morning, {firstName}</h1>
-            <p className="text-sm text-[#2B2B2B]/60 mt-1">Find a place you&apos;ll love</p>
+            <h1 className="font-display text-2xl text-[#111111] dark:text-white">Good morning, {firstName}</h1>
+            <p className="text-sm text-[#2B2B2B]/60 dark:text-white/50 mt-1">Find a place you&apos;ll love</p>
           </div>
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -115,23 +115,23 @@ export default function ClientDashboard() {
               <a
                 key={label}
                 href="#"
-                className="bg-white border border-[#111111]/10 rounded-sm p-4 flex items-start gap-3 hover:border-[#C9975C] transition"
+                className="bg-white dark:bg-[#1a1a1a] border border-[#111111]/10 dark:border-white/10 rounded-sm p-4 flex items-start gap-3 hover:border-[#C9975C] transition"
               >
-                <span className="w-10 h-10 rounded-sm bg-[#F5F1E8] flex items-center justify-center flex-shrink-0">
+                <span className="w-10 h-10 rounded-sm bg-[#F5F1E8] dark:bg-[#0f0f0f] flex items-center justify-center flex-shrink-0">
                   <Icon size={18} strokeWidth={1.75} className="text-[#C9975C]" />
                 </span>
                 <span>
-                  <span className="block text-sm font-medium text-[#111111]">{label}</span>
-                  <span className="block text-xs text-[#2B2B2B]/50 mt-0.5">{description}</span>
+                  <span className="block text-sm font-medium text-[#111111] dark:text-white">{label}</span>
+                  <span className="block text-xs text-[#2B2B2B]/50 dark:text-white/40 mt-0.5">{description}</span>
                 </span>
               </a>
             ))}
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
-            <section className="lg:col-span-2 bg-white border border-[#111111]/10 rounded-sm p-5">
+            <section className="lg:col-span-2 bg-white dark:bg-[#1a1a1a] border border-[#111111]/10 dark:border-white/10 rounded-sm p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg text-[#111111]">Upcoming Inspection</h2>
+                <h2 className="font-display text-lg text-[#111111] dark:text-white">Upcoming Inspection</h2>
                 <a href="#" className="text-xs font-medium text-[#C9975C] hover:underline flex items-center gap-1">
                   View all <ChevronRight size={14} strokeWidth={2} />
                 </a>
@@ -148,13 +148,13 @@ export default function ClientDashboard() {
                 </div>
 
                 <div className="flex-1 flex flex-col">
-                  <p className="font-display text-lg text-[#111111]">3 Bedroom Duplex</p>
-                  <p className="flex items-center gap-1 text-sm text-[#2B2B2B]/60 mt-1">
+                  <p className="font-display text-lg text-[#111111] dark:text-white">3 Bedroom Duplex</p>
+                  <p className="flex items-center gap-1 text-sm text-[#2B2B2B]/60 dark:text-white/50 mt-1">
                     <MapPin size={14} strokeWidth={1.75} />
                     Lekki Phase 1, Lagos
                   </p>
 
-                  <div className="flex items-center gap-4 text-xs text-[#2B2B2B]/60 mt-3">
+                  <div className="flex items-center gap-4 text-xs text-[#2B2B2B]/60 dark:text-white/50 mt-3">
                     <span className="flex items-center gap-1">
                       <CalendarCheck size={14} strokeWidth={1.75} />
                       Sat, Aug 29, 2025
@@ -175,8 +175,8 @@ export default function ClientDashboard() {
                       />
                     </div>
                     <div>
-                      <p className="text-xs text-[#2B2B2B]/50 leading-none">Agent</p>
-                      <p className="text-xs font-medium text-[#111111] mt-0.5">Tobi Adeyemi</p>
+                      <p className="text-xs text-[#2B2B2B]/50 dark:text-white/40 leading-none">Agent</p>
+                      <p className="text-xs font-medium text-[#111111] dark:text-white mt-0.5">Tobi Adeyemi</p>
                     </div>
                   </div>
 
@@ -186,7 +186,7 @@ export default function ClientDashboard() {
                     </button>
                     <button
                       aria-label="Call agent"
-                      className="w-8 h-8 rounded-sm border border-[#111111]/15 flex items-center justify-center text-[#111111] hover:border-[#C9975C] hover:text-[#C9975C] transition"
+                      className="w-8 h-8 rounded-sm border border-[#111111]/15 dark:border-white/15 flex items-center justify-center text-[#111111] dark:text-white hover:border-[#C9975C] hover:text-[#C9975C] transition"
                     >
                       <Phone size={14} strokeWidth={1.75} />
                     </button>
@@ -195,7 +195,7 @@ export default function ClientDashboard() {
               </div>
             </section>
 
-            <section className="bg-[#111111] rounded-sm p-5 flex flex-col">
+            <section className="bg-[#111111] dark:bg-black rounded-sm p-5 flex flex-col">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-sm text-white/60">Next Payment</p>
                 <span className="text-[10px] font-medium uppercase tracking-wide text-[#111111] bg-[#C9975C] px-2 py-0.5 rounded-sm">
@@ -216,9 +216,9 @@ export default function ClientDashboard() {
               </p>
             </section>
 
-            <section className="bg-white border border-[#111111]/10 rounded-sm p-5">
+            <section className="bg-white dark:bg-[#1a1a1a] border border-[#111111]/10 dark:border-white/10 rounded-sm p-5">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-base text-[#111111]">Recent Activity</h2>
+                <h2 className="font-display text-base text-[#111111] dark:text-white">Recent Activity</h2>
                 <a href="#" className="text-xs font-medium text-[#C9975C] hover:underline">
                   View all
                 </a>
@@ -227,13 +227,13 @@ export default function ClientDashboard() {
               <ul className="space-y-4">
                 {activity.map(({ icon: Icon, title, detail, time }) => (
                   <li key={title} className="flex items-start gap-3">
-                    <span className="w-8 h-8 rounded-full bg-[#F5F1E8] flex items-center justify-center flex-shrink-0">
+                    <span className="w-8 h-8 rounded-full bg-[#F5F1E8] dark:bg-[#0f0f0f] flex items-center justify-center flex-shrink-0">
                       <Icon size={14} strokeWidth={1.75} className="text-[#C9975C]" />
                     </span>
                     <div className="min-w-0">
-                      <p className="text-xs font-medium text-[#111111]">{title}</p>
-                      <p className="text-xs text-[#2B2B2B]/50 truncate">{detail}</p>
-                      <p className="text-[10px] text-[#2B2B2B]/35 mt-0.5">{time}</p>
+                      <p className="text-xs font-medium text-[#111111] dark:text-white">{title}</p>
+                      <p className="text-xs text-[#2B2B2B]/50 dark:text-white/40 truncate">{detail}</p>
+                      <p className="text-[10px] text-[#2B2B2B]/35 dark:text-white/30 mt-0.5">{time}</p>
                     </div>
                   </li>
                 ))}
@@ -244,7 +244,7 @@ export default function ClientDashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             <div className="lg:col-span-2">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display text-lg text-[#111111]">Recommended For You</h2>
+                <h2 className="font-display text-lg text-[#111111] dark:text-white">Recommended For You</h2>
                 <a href="#" className="text-xs font-medium text-[#C9975C] hover:underline flex items-center gap-1">
                   View all properties <ChevronRight size={14} strokeWidth={2} />
                 </a>
@@ -255,7 +255,7 @@ export default function ClientDashboard() {
                   <a
                     key={p.id}
                     href="#"
-                    className="bg-white border border-[#111111]/10 rounded-sm overflow-hidden hover:shadow-lg transition"
+                    className="bg-white dark:bg-[#1a1a1a] border border-[#111111]/10 dark:border-white/10 rounded-sm overflow-hidden hover:shadow-lg transition"
                   >
                     <div className="relative h-32">
                       <Image src={p.image} alt={p.title} fill className="object-cover" />
@@ -272,17 +272,17 @@ export default function ClientDashboard() {
                     </div>
 
                     <div className="p-3">
-                      <p className="font-display text-sm text-[#111111]">
+                      <p className="font-display text-sm text-[#111111] dark:text-white">
                         {p.price}
-                        {p.period && <span className="text-xs text-[#2B2B2B]/50 font-sans"> {p.period}</span>}
+                        {p.period && <span className="text-xs text-[#2B2B2B]/50 dark:text-white/40 font-sans"> {p.period}</span>}
                       </p>
-                      <p className="text-xs text-[#2B2B2B]/70 mt-1">{p.title}</p>
-                      <p className="flex items-center gap-1 text-[11px] text-[#2B2B2B]/45 mt-0.5">
+                      <p className="text-xs text-[#2B2B2B]/70 dark:text-white/60 mt-1">{p.title}</p>
+                      <p className="flex items-center gap-1 text-[11px] text-[#2B2B2B]/45 dark:text-white/40 mt-0.5">
                         <MapPin size={11} strokeWidth={1.75} />
                         {p.location}
                       </p>
 
-                      <div className="flex items-center gap-3 text-[11px] text-[#2B2B2B]/50 mt-2 pt-2 border-t border-[#111111]/10">
+                      <div className="flex items-center gap-3 text-[11px] text-[#2B2B2B]/50 dark:text-white/40 mt-2 pt-2 border-t border-[#111111]/10 dark:border-white/10">
                         <span className="flex items-center gap-1">
                           <BedDouble size={12} strokeWidth={1.75} />
                           {p.beds}
@@ -302,25 +302,25 @@ export default function ClientDashboard() {
               </div>
             </div>
 
-            <section className="bg-white border border-[#111111]/10 rounded-sm p-5 flex flex-col items-center text-center justify-center">
+            <section className="bg-white dark:bg-[#1a1a1a] border border-[#111111]/10 dark:border-white/10 rounded-sm p-5 flex flex-col items-center text-center justify-center">
               <div className="flex items-center justify-between w-full mb-2">
-                <h2 className="font-display text-base text-[#111111]">Saved Properties</h2>
+                <h2 className="font-display text-base text-[#111111] dark:text-white">Saved Properties</h2>
                 <a href="#" className="text-xs font-medium text-[#C9975C] hover:underline">
                   View all
                 </a>
               </div>
 
-              <span className="w-12 h-12 rounded-full bg-[#F5F1E8] flex items-center justify-center my-3">
+              <span className="w-12 h-12 rounded-full bg-[#F5F1E8] dark:bg-[#0f0f0f] flex items-center justify-center my-3">
                 <Heart size={20} strokeWidth={1.75} className="text-[#C9975C]" />
               </span>
 
-              <p className="font-display text-3xl text-[#111111]">8</p>
-              <p className="text-xs text-[#2B2B2B]/50 mt-1">properties saved</p>
-              <p className="text-[11px] text-[#2B2B2B]/40 mt-2">Keep track of properties you love.</p>
+              <p className="font-display text-3xl text-[#111111] dark:text-white">8</p>
+              <p className="text-xs text-[#2B2B2B]/50 dark:text-white/40 mt-1">properties saved</p>
+              <p className="text-[11px] text-[#2B2B2B]/40 dark:text-white/30 mt-2">Keep track of properties you love.</p>
             </section>
           </div>
 
-          <section className="relative bg-[#111111] rounded-sm overflow-hidden">
+          <section className="relative bg-[#111111] dark:bg-black rounded-sm overflow-hidden">
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px]">
               <div className="p-6 flex flex-col justify-center">
                 <h2 className="font-display text-lg text-white mb-4">Why choose B&apos;NARCH</h2>
