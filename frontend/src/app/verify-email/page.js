@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useState, useRef, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -21,7 +22,7 @@ function VerifyEmailForm() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/verify-otp", {
+      const res = await fetch(`${API_URL}/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp_code: code }),

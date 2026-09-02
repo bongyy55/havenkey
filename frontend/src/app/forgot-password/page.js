@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +17,7 @@ export default function ForgotPasswordPage() {
     setError("");
 
     try {
-      await fetch("http://127.0.0.1:8000/forgot-password", {
+      await fetch(`${API_URL}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

@@ -12,7 +12,7 @@ app = FastAPI(title="B'Narch API")
 # Allow your Next.js frontend to talk to this backend during development
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["http://localhost:3000", "https://havenkey-psi.vercel.app"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
