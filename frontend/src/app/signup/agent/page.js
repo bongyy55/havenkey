@@ -1,6 +1,11 @@
 "use client";
 
+<<<<<<< HEAD
 import { useState, useRef, useEffect } from "react";
+=======
+import { API_URL } from "@/lib/api";
+import { useState } from "react";
+>>>>>>> ec2e7e87ce69fb97cd5404c394f4a3b297013d09
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -85,8 +90,12 @@ export default function AgentSignup() {
     setError("");
 
     try {
+<<<<<<< HEAD
       const fullPhoneNumber = `${selectedCountry.code}${form.phone}`;
       const res = await fetch("http://127.0.0.1:8000/register", {
+=======
+      const res = await fetch(`${API_URL}/register`, {
+>>>>>>> ec2e7e87ce69fb97cd5404c394f4a3b297013d09
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

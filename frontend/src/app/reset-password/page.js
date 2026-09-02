@@ -1,5 +1,6 @@
 "use client";
 
+import { API_URL } from "@/lib/api";
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -38,7 +39,7 @@ function ResetPasswordForm() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/reset-password", {
+      const res = await fetch(`${API_URL}/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
