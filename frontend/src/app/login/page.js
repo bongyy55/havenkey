@@ -5,6 +5,9 @@ import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
+import AuthImage from "@/components/images/AuthImage.jpeg";
 
 function LoginForm() {
   const router = useRouter();
@@ -54,7 +57,7 @@ function LoginForm() {
         setError(
           `This account is registered as a${
             data.user.role === "agent" ? "n" : ""
-          } ${data.user.role}. Please switch to the ${data.user.role} tab above.`
+          } ${data.user.role}. Please switch to the ${data.user.role} tab above.`,
         );
         setLoading(false);
         return;
@@ -78,137 +81,204 @@ function LoginForm() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center px-6 py-16">
-      <div className="w-full max-w-md bg-white rounded-sm p-8 border border-[#111111]/10">
-        <Link
-          href="/"
-          className="flex items-center gap-1.5 text-xs text-[#2B2B2B]/60 hover:text-[#C9975C] mb-6"
-        >
-          ← Back to home
-        </Link>
+  const inputClass =
+    "w-full border border-[#111111]/15 rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#111111] outline-none bg-white hover:border-[#111111]/30 focus:border-[#C9975C] focus:ring-2 focus:ring-[#C9975C]/20 focus:scale-[1.01] transition-all duration-300";
 
-        <Link href="/" className="flex justify-center mb-6">
+  return (
+    <div className="min-h-screen bg-[#F5F1E8] flex items-center justify-center p-4 sm:p-6 lg:p-8 font-serif">
+      <div className="w-full max-w-5xl bg-[#FCFBF7] rounded-2xl shadow-2xl border border-[#111111]/10 overflow-hidden flex flex-col lg:flex-row">
+        {/* ================= LEFT COLUMN: Pure Image Layout (Hidden on Mobile) ================= */}
+        <div className="hidden lg:block lg:w-1/2 relative min-h-[750px] overflow-hidden group">
           <Image
-            src="/logo.jpeg"
-            alt="B'Narch"
-            width={220}
-            height={220}
-            className="h-24 w-auto object-contain"
+            src={AuthImage}
+            alt="Find Inspect Own with Confidence"
+            fill
+            className="object-cover object-center transform scale-100 group-hover:scale-105 transition-transform duration-1000 ease-out"
             priority
           />
-        </Link>
-
-        <div className="inline-flex w-full bg-[#F5F1E8] border border-[#111111]/10 rounded-sm p-1 mb-6">
-          <button
-            type="button"
-            onClick={() => handleRoleSwitch("client")}
-            className={`flex-1 py-2 text-sm font-medium rounded-sm transition ${
-              role === "client"
-                ? "bg-white text-[#111111] shadow-sm"
-                : "text-[#2B2B2B]/60 hover:text-[#111111]"
-            }`}
-          >
-            Client
-          </button>
-          <button
-            type="button"
-            onClick={() => handleRoleSwitch("agent")}
-            className={`flex-1 py-2 text-sm font-medium rounded-sm transition ${
-              role === "agent"
-                ? "bg-white text-[#111111] shadow-sm"
-                : "text-[#2B2B2B]/60 hover:text-[#111111]"
-            }`}
-          >
-            Agent
-          </button>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
         </div>
 
-        <h1 className="font-display text-2xl text-[#111111] text-center mb-1">
-          {role === "agent" ? "Agent login" : "Welcome back"}
-        </h1>
-        <p className="text-sm text-[#2B2B2B]/70 text-center mb-8">
-          {role === "agent"
-            ? "Log in to manage your listings and clients."
-            : "Log in to continue to your account."}
-        </p>
-
-        {justVerified && (
-          <div className="bg-[#F5F1E8] border border-[#C9975C]/30 rounded-sm px-4 py-3 mb-6">
-            <p className="text-xs text-[#2B2B2B]/80">
-              Your account has been verified. You can now log in.
-            </p>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-xs text-[#2B2B2B]/70 mb-1">
-              Email address
-            </label>
-            <input
-              type="email"
-              name="email"
-              required
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-xs text-[#2B2B2B]/70">
-                Password
-              </label>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-[#C9975C] hover:underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                name="password"
-                required
-                value={form.password}
-                onChange={handleChange}
-                className="w-full border border-[#111111]/15 rounded-sm px-3 py-2.5 pr-10 text-sm text-[#111111] outline-none focus:border-[#C9975C]"
-                placeholder="Enter your password"
-              />
+        {/* ================= RIGHT COLUMN: Interactive Form Container ================= */}
+        <div className="w-full lg:w-1/2 bg-white p-8 sm:p-12 flex flex-col justify-center relative">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col"
+          >
+            {/* Client / Agent Switcher Tabs */}
+            <div className="relative inline-flex w-full bg-[#F5F1E8] border border-[#111111]/10 rounded-xl p-1 mb-5 flex-shrink-0">
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#2B2B2B]/50 hover:text-[#C9975C]"
+                onClick={() => handleRoleSwitch("client")}
+                className={`relative flex-1 py-2 text-sm font-semibold rounded-lg text-center z-10 transition-colors duration-300 cursor-pointer ${
+                  role === "client"
+                    ? "text-[#111111]"
+                    : "text-[#2B2B2B]/60 hover:text-[#111111]"
+                }`}
               >
-                {showPassword ? "Hide" : "Show"}
+                {role === "client" && (
+                  <motion.span
+                    layoutId="login-tab-pill"
+                    className="absolute inset-0 bg-white rounded-lg shadow-sm -z-10"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                Client
+              </button>
+              <button
+                type="button"
+                onClick={() => handleRoleSwitch("agent")}
+                className={`relative flex-1 py-2 text-sm font-semibold rounded-lg text-center z-10 transition-colors duration-300 cursor-pointer ${
+                  role === "agent"
+                    ? "text-[#111111]"
+                    : "text-[#2B2B2B]/60 hover:text-[#111111]"
+                }`}
+              >
+                {role === "agent" && (
+                  <motion.span
+                    layoutId="login-tab-pill"
+                    className="absolute inset-0 bg-white rounded-lg shadow-sm -z-10"
+                    transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                  />
+                )}
+                Agent
               </button>
             </div>
-          </div>
 
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+            {/* Heading Header */}
+            <div className="mb-4">
+              <h2 className="text-2xl sm:text-3xl text-[#111111] mb-1 tracking-tight">
+                {role === "agent" ? "Agent login" : "Welcome back"}
+              </h2>
+              <p className="text-xs text-[#2B2B2B]/60">
+                {role === "agent"
+                  ? "Log in to manage your listings and clients."
+                  : "Log in to continue to your account."}
+              </p>
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#111111] text-white font-medium py-3 rounded-sm hover:bg-[#C9975C] transition disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Log in"}
-          </button>
-        </form>
+            {/* Verified Banner */}
+            {justVerified && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-[#F5F1E8] border border-[#C9975C]/30 rounded-xl px-4 py-3 mb-4"
+              >
+                <p className="text-xs text-[#2B2B2B]/80">
+                  Your account has been verified. You can now log in.
+                </p>
+              </motion.div>
+            )}
 
-        <p className="text-center text-sm text-[#2B2B2B]/70 mt-6">
-          Don't have an account?{" "}
-          <Link
-            href={role === "agent" ? "/signup/agent" : "/signup/client"}
-            className="text-[#C9975C] font-medium hover:underline"
-          >
-            Sign up
-          </Link>
-        </p>
+            {/* Main Form */}
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <div className="group">
+                <label className="block text-[11px] font-semibold text-[#2B2B2B]/70 mb-1">
+                  Email address
+                </label>
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 z-10 text-[#2B2B2B]/40 transition-colors group-focus-within:text-[#C9975C] pointer-events-none">
+                    <Mail className="w-4 h-4" />
+                  </span>
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    value={form.email}
+                    onChange={handleChange}
+                    className={inputClass}
+                    placeholder="you@example.com"
+                  />
+                </div>
+              </div>
+
+              <div className="group">
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-[11px] font-semibold text-[#2B2B2B]/70">
+                    Password
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-[11px] text-[#C9975C] font-semibold hover:underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 z-10 text-[#2B2B2B]/40 transition-colors group-focus-within:text-[#C9975C] pointer-events-none">
+                    <Lock className="w-4 h-4" />
+                  </span>
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    required
+                    value={form.password}
+                    onChange={handleChange}
+                    className={`${inputClass} pr-12`}
+                    placeholder="Enter your password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 text-[11px] font-semibold text-[#2B2B2B]/50 hover:text-[#C9975C] cursor-pointer transition-colors px-2 py-1 flex items-center gap-1"
+                  >
+                    {showPassword ? (
+                      <>
+                        <EyeOff className="w-3.5 h-3.5" />
+                        <span>Hide</span>
+                      </>
+                    ) : (
+                      <>
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>Show</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Error Message Box */}
+              {error && (
+                <motion.p
+                  initial={{ opacity: 0, y: -4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="text-red-500 text-xs bg-red-50 p-2.5 rounded-xl border border-red-100"
+                >
+                  {error}
+                </motion.p>
+              )}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-[#C9975C] text-white font-medium py-3 rounded-xl hover:bg-[#111111] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+              >
+                {loading ? (
+                  <span>Logging in...</span>
+                ) : (
+                  <>
+                    <span>Log in</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Footer Navigation Link */}
+            <p className="text-center text-xs text-[#2B2B2B]/70 mt-4">
+              Don&apos;t have an account?{" "}
+              <Link
+                href={role === "agent" ? "/signup/agent" : "/signup/client"}
+                className="text-[#C9975C] font-semibold hover:underline cursor-pointer transition-colors"
+              >
+                Sign up
+              </Link>
+            </p>
+          </motion.div>
+        </div>
       </div>
     </div>
   );
